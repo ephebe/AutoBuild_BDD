@@ -60,6 +60,13 @@ class Build : NukeBuild
                 .EnableNoRestore());
         });
 
+    Target Database => _ => _
+        .DependsOn(Compile)
+        .Executes(() =>
+        {
+            
+        });
+
     Target Test => _ => _
        .DependsOn(Compile)
        .Executes(() =>
@@ -67,6 +74,7 @@ class Build : NukeBuild
            DotNetTest(s => s
             .SetProjectFile(AutoBuild_BDD)
             .SetConfiguration(Configuration)
+            .SetLoggers("console", "verbosity=detailed")
             .EnableNoRestore()
             .EnableNoBuild());
        });
