@@ -74,7 +74,6 @@ class Build : NukeBuild
            DotNetTest(s => s
             .SetProjectFile(AutoBuild_BDD)
             .SetConfiguration(Configuration)
-            .SetLoggers("console", "verbosity=detailed")
             .EnableNoRestore()
             .EnableNoBuild());
        });

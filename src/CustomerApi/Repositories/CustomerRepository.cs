@@ -1,42 +1,50 @@
 ﻿using CustomerApi.ErrorHandling;
 using CustomerApi.Models;
-using LiteDB;
+using CustomerApi.Persistence;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace CustomerApi.Repositories
 {
     internal class CustomerRepository : ICustomerRepository
     {
-        private readonly ILiteCollection<Customer> _collection;
+        private readonly BDDContext _context;
 
-        public CustomerRepository(LiteDatabase db)
+        public CustomerRepository(BDDContext context)
         {
-            _collection = db.GetCollection<Customer>();
-            _collection.EnsureIndex(x => x.Email, true);
+            _context = context;
         }
 
-        public Customer CreateCustomer(Customer customer)
+        public async Task<Customer> CreateCustomer(Customer customer)
         {
             try
             {
-                customer.Id = _collection.Insert(customer).AsGuid;
+                _context.Add(customer);
+
+                await _context.SaveChangesAsync();
+
+                return customer;
             }
-            catch (LiteException ex) when (ex.ErrorCode == LiteException.INDEX_DUPLICATE_KEY)
+            catch (SqlException ex)
             {
                 throw new EmailAlreadyInUseException();
             }
+        }
+
+        public async Task<Customer> FindCustomerById(Guid id)
+        {
+            var customer = await _context.Customers.FindAsync(id);
 
             return customer;
         }
 
-        public Customer FindCustomerById(Guid id)
+        public async Task <bool> DeleteCustomer(Guid id)
         {
-            return _collection.FindById(id);
-        }
-
-        public bool DeleteCustomer(Guid id)
-        {
-            return _collection.Delete(id);
+            var customer = await _context.Customers.FindAsync(id);
+            _context.Customers.Remove(customer);
+            return _context.SaveChanges() > 0;
         }
     }
 }

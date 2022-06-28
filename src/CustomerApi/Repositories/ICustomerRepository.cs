@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CustomerApi.Models;
 
 namespace CustomerApi.Repositories
 {
     public interface ICustomerRepository
     {
-        Customer CreateCustomer(Customer customer);
-        Customer FindCustomerById(Guid id);
-        bool DeleteCustomer(Guid id);
+        Task<Customer> CreateCustomer(Customer customer);
+        Task<Customer> FindCustomerById(Guid id);
+        Task<bool> DeleteCustomer(Guid id);
     }
 }

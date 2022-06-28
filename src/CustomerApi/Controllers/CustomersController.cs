@@ -2,6 +2,7 @@
 using CustomerApi.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace CustomerApi.Controllers
 {
@@ -19,9 +20,9 @@ namespace CustomerApi.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(Customer))]
         [ProducesResponseType(404)]
-        public ActionResult<Customer> GetCustomer(Guid id)
+        public async Task<ActionResult<Customer>> GetCustomer(Guid id)
         {
-            var customer = _customerRepository.FindCustomerById(id);
+            var customer = await _customerRepository.FindCustomerById(id);
             if (customer == null)
                 return NotFound();
             return customer;
@@ -38,9 +39,9 @@ namespace CustomerApi.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public IActionResult DeleteCustomer(Guid id)
+        public async Task<IActionResult> DeleteCustomer(Guid id)
         {
-            if (!_customerRepository.DeleteCustomer(id))
+            if (!await _customerRepository.DeleteCustomer(id))
                 return NotFound();
             return Ok();
         }

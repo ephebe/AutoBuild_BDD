@@ -1,12 +1,13 @@
 ﻿using CustomerApi.ErrorHandling;
 using CustomerApi.Filters;
 using CustomerApi.Models;
+using CustomerApi.Persistence;
 using CustomerApi.Repositories;
-using LiteDB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,7 +42,9 @@ namespace CustomerApi
         private void RegisterDependencies(IServiceCollection services)
         {
             services.AddSingleton<ICustomerRepository, CustomerRepository>();
-            services.AddSingleton(new LiteDatabase(Configuration.GetConnectionString("db")));
+            //services.AddSingleton(new LiteDatabase(Configuration.GetConnectionString("db")));
+            services.AddDbContext<BDDContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,12 +65,6 @@ namespace CustomerApi
                 endpoints.MapControllers();
             });
 
-            ConfigureDatabaseSchema();
-        }
-
-        private void ConfigureDatabaseSchema()
-        {
-            BsonMapper.Global.Entity<Customer>().Id(x => x.Id);
         }
 
         private static void ConfigureSwagger(IApplicationBuilder app)

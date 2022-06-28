@@ -78,6 +78,7 @@
             "enum": [
               "Clean",
               "Compile",
+              "Database",
               "Restore",
               "Test"
             ]
@@ -91,6 +92,7 @@
             "enum": [
               "Clean",
               "Compile",
+              "Database",
               "Restore",
               "Test"
             ]
