@@ -10,26 +10,26 @@ namespace CustomerApi.ServiceTests.Features
 @"In order to manage customers database
 As an Api client
 I want to be able to delete existing customers")]
-    public partial class Deleting_customers
+    public partial class 刪除客戶
     {
         [Scenario]
-        public async Task 刪除客戶()
+        public async Task 刪除一個客戶()
         {
             await Runner.RunScenarioAsync(
                 _ => 給一個已存在的客戶ID(),
                 _ => 當要求根據此ID刪除客戶(),
-                _ => 然後回覆碼應該是OK(HttpStatusCode.OK),
-                _ => When_I_request_the_customer_by_this_Id(),
-                _ => 然後回覆碼應該是OK(HttpStatusCode.NotFound));
+                _ => 然後回覆碼應該是(HttpStatusCode.OK),
+                _ => 當要取得此ID的客戶時(),
+                _ => 然後回覆碼應該是(HttpStatusCode.NotFound));
         }
 
         [Scenario]
-        public async Task Deleting_nonexistent_customer()
+        public async Task 刪除不存在的客戶()
         {
             await Runner.RunScenarioAsync(
-                _ => Given_an_Id_of_nonexistent_customer(),
+                _ => 給一個不存在的客戶ID(),
                 _ => 當要求根據此ID刪除客戶(),
-                _ => 然後回覆碼應該是OK(HttpStatusCode.NotFound));
+                _ => 然後回覆碼應該是(HttpStatusCode.NotFound));
         }
     }
 }

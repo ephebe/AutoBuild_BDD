@@ -44,6 +44,9 @@ namespace CustomerApi.Repositories
         public async Task <bool> DeleteCustomer(Guid id)
         {
             var customer = await _context.Customers.FindAsync(id);
+            if (customer == null)
+                return false;
+
             _context.Customers.Remove(customer);
             return _context.SaveChanges() > 0;
         }

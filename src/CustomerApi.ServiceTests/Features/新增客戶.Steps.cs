@@ -11,14 +11,14 @@ using Xunit;
 
 namespace CustomerApi.ServiceTests.Features
 {
-    public partial class Adding_customers
+    public partial class 新增客戶
     {
         private readonly HttpClient _client;
         private State<CreateCustomerRequest> _createCustomerRequest;
         private State<HttpResponseMessage> _response;
         private State<Customer> _createdCustomer;
 
-        public Adding_customers()
+        public 新增客戶()
         {
             _client = TestServer.GetClient();
         }

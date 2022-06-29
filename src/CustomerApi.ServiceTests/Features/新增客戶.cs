@@ -13,7 +13,7 @@ namespace CustomerApi.ServiceTests.Features
 @"In order to manage customers database
 As an Api client
 I want to be able to add new customers")]
-    public partial class Adding_customers : FeatureFixture
+    public partial class 新增客戶 : FeatureFixture
     {
         [Scenario]
         public async Task 創建一個新的客戶()

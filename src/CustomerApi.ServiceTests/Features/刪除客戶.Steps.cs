@@ -9,13 +9,13 @@ using Xunit;
 
 namespace CustomerApi.ServiceTests.Features
 {
-    public partial class Deleting_customers : FeatureFixture
+    public partial class 刪除客戶 : FeatureFixture
     {
         private readonly HttpClient _client;
         private State<Guid> _customerId;
         private State<HttpResponseMessage> _response;
 
-        public Deleting_customers()
+        public 刪除客戶()
         {
             _client = TestServer.GetClient();
         }
@@ -33,7 +33,7 @@ namespace CustomerApi.ServiceTests.Features
             _customerId = customer.Id;
         }
 
-        private async Task Given_an_Id_of_nonexistent_customer()
+        private async Task 給一個不存在的客戶ID()
         {
             _customerId = Guid.NewGuid();
         }
@@ -43,12 +43,12 @@ namespace CustomerApi.ServiceTests.Features
             _response = await _client.DeleteCustomerById(_customerId.GetValue());
         }
 
-        private async Task When_I_request_the_customer_by_this_Id()
+        private async Task 當要取得此ID的客戶時()
         {
             _response = await _client.GetCustomerById(_customerId);
         }
 
-        private async Task 然後回覆碼應該是OK(HttpStatusCode code)
+        private async Task 然後回覆碼應該是(HttpStatusCode code)
         {
             Assert.Equal(code, _response.GetValue().StatusCode);
         }

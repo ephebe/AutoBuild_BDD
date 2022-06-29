@@ -9,7 +9,7 @@ using Xunit;
 
 namespace CustomerApi.ServiceTests.Features
 {
-    public partial class Retrieving_customers : FeatureFixture
+    public partial class 取得客戶 : FeatureFixture
     {
         private readonly HttpClient _client;
         private State<HttpResponseMessage> _customerCreationResponse;
@@ -17,12 +17,12 @@ namespace CustomerApi.ServiceTests.Features
         private State<CreateCustomerRequest> _customerCreationRequest;
         private State<Guid> _customerId;
 
-        public Retrieving_customers()
+        public 取得客戶()
         {
             _client = TestServer.GetClient();
         }
 
-        private async Task Given_a_successful_customer_creation_response()
+        private async Task 給一個成功的新增客戶回覆()
         {
             _customerCreationRequest = new CreateCustomerRequest
             {
@@ -34,33 +34,33 @@ namespace CustomerApi.ServiceTests.Features
             _customerCreationResponse.GetValue().EnsureSuccessStatusCode();
         }
 
-        private async Task Given_an_Id_of_the_created_customer()
+        private async Task 給一個新增成功客戶的ID()
         {
             var customer = await _customerCreationResponse.GetValue().DeserializeAsync<Customer>();
             _customerId = customer.Id;
         }
 
-        private async Task Given_an_Id_of_nonexistent_customer()
+        private async Task 給一個不存在的客戶ID()
         {
             _customerId = Guid.NewGuid();
         }
 
-        private async Task When_I_request_the_customer_by_this_Id()
+        private async Task 當我根據此ID要求客戶()
         {
             _response = await _client.GetCustomerById(_customerId);
         }
 
-        private async Task When_I_follow_the_response_location_header()
+        private async Task 當我根據此回覆的標頭位置查詢()
         {
             _response = await _client.GetAsync(_customerCreationResponse.GetValue().Headers.Location);
         }
 
-        private async Task Then_the_response_should_have_status_code(HttpStatusCode code)
+        private async Task 然後回覆的狀態碼應該是(HttpStatusCode code)
         {
             Assert.Equal(code, _response.GetValue().StatusCode);
         }
 
-        private async Task Then_the_response_should_contain_existing_customer_details()
+        private async Task 然後回覆應該包含客戶的詳細資料()
         {
             var actual = await _response.GetValue().DeserializeAsync<Customer>();
             var expected = _customerCreationRequest.GetValue();
