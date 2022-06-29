@@ -16,40 +16,40 @@ I want to be able to add new customers")]
     public partial class Adding_customers : FeatureFixture
     {
         [Scenario]
-        public async Task Creating_a_new_customer()
+        public async Task 創建一個新的客戶()
         {
             await Runner.RunScenarioAsync(
-                _ => Given_a_valid_CreateCustomerRequest(),
-                _ => When_I_request_customer_creation(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.Created),
-                _ => Then_the_response_should_have_customer_content(),
-                _ => Then_the_response_should_have_location_header(),
-                _ => Then_the_created_customer_should_contain_specified_customer_data(),
-                _ => Then_the_created_customer_should_contain_customer_Id());
+                _ => 給一個正確的創建客戶的要求內容(),
+                _ => 當我要求客戶的創建(),
+                _ => 然後回覆應該有狀態碼(HttpStatusCode.Created),
+                _ => 然後回覆應該有客戶內容(),
+                _ => 然後回覆的標頭應該有查詢的網址(),
+                _ => 然後已建立的客戶應包含特定的客戶資料(),
+                _ => 然後已建立的客戶應包含客戶的ID());
         }
 
         [Scenario]
-        public async Task Creating_customer_with_missing_details_is_not_allowed()
+        public async Task 創建客戶但沒內容是不被允許()
         {
             await Runner.RunScenarioAsync(
-                _ => Given_a_CreateCustomerRequest_with_no_details(),
-                _ => When_I_request_customer_creation(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.BadRequest),
-                _ => Then_the_response_should_contain_errors(Table.ExpectData(
+                _ => 給一個創建客戶的要求但沒有資料內容(),
+                _ => 當我要求客戶的創建(),
+                _ => 然後回覆應該有狀態碼(HttpStatusCode.BadRequest),
+                _ => 然後回覆應該包含錯誤內容(Table.ExpectData(
                     new Error(ErrorCodes.ValidationError, "The Email field is required."),
                     new Error(ErrorCodes.ValidationError, "The FirstName field is required."),
                     new Error(ErrorCodes.ValidationError, "The LastName field is required."))));
         }
 
         [Scenario]
-        public async Task Creating_customer_with_already_used_email_is_not_allowed()
+        public async Task 創建的客戶的Email與現存的相同是不被允許的()
         {
             await Runner.RunScenarioAsync(
-                _ => Given_an_existing_customer(),
-                _ => Given_a_CreateCustomerRequest_with_the_same_email_as_existing_customer(),
-                _ => When_I_request_customer_creation(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.BadRequest),
-                _ => Then_the_response_should_contain_errors(Table.ExpectData(new Error(ErrorCodes.EmailInUse, "Email already in use."))));
+                _ => 給一個已存在的客戶(),
+                _ => 給一個創建客戶的要求但Email與一個現存客戶相同(),
+                _ => 當我要求客戶的創建(),
+                _ => 然後回覆應該有狀態碼(HttpStatusCode.BadRequest),
+                _ => 然後回覆應該包含錯誤內容(Table.ExpectData(new Error(ErrorCodes.EmailInUse, "Email already in use."))));
         }
     }
 }

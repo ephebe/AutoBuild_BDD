@@ -20,7 +20,7 @@ namespace CustomerApi.ServiceTests.Features
             _client = TestServer.GetClient();
         }
 
-        private async Task Given_an_existing_customer_Id()
+        private async Task 給一個已存在的客戶ID()
         {
             var request = new CreateCustomerRequest
             {
@@ -38,7 +38,7 @@ namespace CustomerApi.ServiceTests.Features
             _customerId = Guid.NewGuid();
         }
 
-        private async Task When_I_request_to_delete_customer_by_this_Id()
+        private async Task 當要求根據此ID刪除客戶()
         {
             _response = await _client.DeleteCustomerById(_customerId.GetValue());
         }
@@ -48,7 +48,7 @@ namespace CustomerApi.ServiceTests.Features
             _response = await _client.GetCustomerById(_customerId);
         }
 
-        private async Task Then_the_response_should_have_status_code(HttpStatusCode code)
+        private async Task 然後回覆碼應該是OK(HttpStatusCode code)
         {
             Assert.Equal(code, _response.GetValue().StatusCode);
         }

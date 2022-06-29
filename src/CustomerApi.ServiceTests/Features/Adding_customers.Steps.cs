@@ -23,7 +23,7 @@ namespace CustomerApi.ServiceTests.Features
             _client = TestServer.GetClient();
         }
 
-        private async Task Given_a_valid_CreateCustomerRequest()
+        private async Task 給一個正確的創建客戶的要求內容()
         {
             _createCustomerRequest = new CreateCustomerRequest
             {
@@ -33,7 +33,7 @@ namespace CustomerApi.ServiceTests.Features
             };
         }
 
-        private async Task Given_a_CreateCustomerRequest_with_the_same_email_as_existing_customer()
+        private async Task 給一個創建客戶的要求但Email與一個現存客戶相同()
         {
             _createCustomerRequest = new CreateCustomerRequest
             {
@@ -43,32 +43,32 @@ namespace CustomerApi.ServiceTests.Features
             };
         }
 
-        private async Task<CompositeStep> Given_an_existing_customer()
+        private async Task<CompositeStep> 給一個已存在的客戶()
         {
             return CompositeStep.DefineNew()
                 .AddAsyncSteps(
-                    _ => Given_a_valid_CreateCustomerRequest(),
-                    _ => When_I_request_customer_creation(),
-                    _ => Then_the_response_should_have_status_code(HttpStatusCode.Created))
+                    _ => 給一個正確的創建客戶的要求內容(),
+                    _ => 當我要求客戶的創建(),
+                    _ => 然後回覆應該有狀態碼(HttpStatusCode.Created))
                 .Build();
         }
 
-        private async Task Given_a_CreateCustomerRequest_with_no_details()
+        private async Task 給一個創建客戶的要求但沒有資料內容()
         {
             _createCustomerRequest = new CreateCustomerRequest();
         }
 
-        private async Task When_I_request_customer_creation()
+        private async Task 當我要求客戶的創建()
         {
             _response = await _client.CreateCustomer(_createCustomerRequest.GetValue());
         }
 
-        private async Task Then_the_created_customer_should_contain_customer_Id()
+        private async Task 然後已建立的客戶應包含客戶的ID()
         {
             Assert.NotEqual(Guid.Empty, _createdCustomer.GetValue().Id);
         }
 
-        private async Task Then_the_created_customer_should_contain_specified_customer_data()
+        private async Task 然後已建立的客戶應包含特定的客戶資料()
         {
             var request = _createCustomerRequest.GetValue();
             var customer = _createdCustomer.GetValue();
@@ -78,23 +78,23 @@ namespace CustomerApi.ServiceTests.Features
             Assert.Equal(request.LastName, customer.LastName);
         }
 
-        private async Task Then_the_response_should_have_status_code(HttpStatusCode code)
+        private async Task 然後回覆應該有狀態碼(HttpStatusCode code)
         {
             Assert.Equal(code, _response.GetValue().StatusCode);
         }
 
-        private async Task Then_the_response_should_have_customer_content()
+        private async Task 然後回覆應該有客戶內容()
         {
             _createdCustomer = await _response.GetValue().DeserializeAsync<Customer>();
         }
 
-        private async Task Then_the_response_should_contain_errors(VerifiableDataTable<Error> errors)
+        private async Task 然後回覆應該包含錯誤內容(VerifiableDataTable<Error> errors)
         {
             var actual = await _response.GetValue().DeserializeAsync<Errors>();
             errors.SetActual(actual.Items.OrderBy(x => x.Message));
         }
 
-        private async Task Then_the_response_should_have_location_header()
+        private async Task 然後回覆的標頭應該有查詢的網址()
         {
             Assert.NotNull(_response.GetValue().Headers.Location);
         }

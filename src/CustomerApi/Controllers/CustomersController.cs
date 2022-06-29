@@ -30,9 +30,9 @@ namespace CustomerApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(Customer))]
-        public ActionResult<Customer> CreateCustomer([FromBody] CreateCustomerRequest request)
+        public async Task<ActionResult<Customer>> CreateCustomer([FromBody] CreateCustomerRequest request)
         {
-            var customer = _customerRepository.CreateCustomer(request.ToCustomer());
+            var customer = await _customerRepository.CreateCustomer(request.ToCustomer());
             return CreatedAtAction(nameof(GetCustomer), new { id = customer.Id }, customer);
         }
 

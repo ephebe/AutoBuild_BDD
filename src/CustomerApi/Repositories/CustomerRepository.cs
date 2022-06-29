@@ -4,6 +4,7 @@ using CustomerApi.Persistence;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CustomerApi.Repositories
@@ -19,18 +20,18 @@ namespace CustomerApi.Repositories
 
         public async Task<Customer> CreateCustomer(Customer customer)
         {
-            try
-            {
+           
+                var existCustomer = _context.Customers.FirstOrDefault(s => s.Email == customer.Email);
+                if (existCustomer != null) {
+                    throw new EmailAlreadyInUseException();
+                }
+                customer.Id = Guid.NewGuid();
+
                 _context.Add(customer);
 
                 await _context.SaveChangesAsync();
 
-                return customer;
-            }
-            catch (SqlException ex)
-            {
-                throw new EmailAlreadyInUseException();
-            }
+                return customer;            
         }
 
         public async Task<Customer> FindCustomerById(Guid id)

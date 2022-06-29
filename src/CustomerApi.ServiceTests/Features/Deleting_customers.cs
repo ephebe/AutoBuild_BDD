@@ -13,14 +13,14 @@ I want to be able to delete existing customers")]
     public partial class Deleting_customers
     {
         [Scenario]
-        public async Task Deleting_customer()
+        public async Task 刪除客戶()
         {
             await Runner.RunScenarioAsync(
-                _ => Given_an_existing_customer_Id(),
-                _ => When_I_request_to_delete_customer_by_this_Id(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.OK),
+                _ => 給一個已存在的客戶ID(),
+                _ => 當要求根據此ID刪除客戶(),
+                _ => 然後回覆碼應該是OK(HttpStatusCode.OK),
                 _ => When_I_request_the_customer_by_this_Id(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.NotFound));
+                _ => 然後回覆碼應該是OK(HttpStatusCode.NotFound));
         }
 
         [Scenario]
@@ -28,8 +28,8 @@ I want to be able to delete existing customers")]
         {
             await Runner.RunScenarioAsync(
                 _ => Given_an_Id_of_nonexistent_customer(),
-                _ => When_I_request_to_delete_customer_by_this_Id(),
-                _ => Then_the_response_should_have_status_code(HttpStatusCode.NotFound));
+                _ => 當要求根據此ID刪除客戶(),
+                _ => 然後回覆碼應該是OK(HttpStatusCode.NotFound));
         }
     }
 }

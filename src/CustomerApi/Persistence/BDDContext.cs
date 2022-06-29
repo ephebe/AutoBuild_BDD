@@ -13,7 +13,11 @@ namespace CustomerApi.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ToTable("Course");
+            modelBuilder.Entity<Customer>().ToTable("Customer");
+            modelBuilder.Entity<Customer>().HasKey(s => s.Id);
+            modelBuilder.Entity<Customer>().Property(s => s.FirstName);
+            modelBuilder.Entity<Customer>().Property(s => s.LastName);
+            modelBuilder.Entity<Customer>().Property(s => s.Email);
         }
     }
 }

@@ -41,10 +41,9 @@ namespace CustomerApi
 
         private void RegisterDependencies(IServiceCollection services)
         {
-            services.AddSingleton<ICustomerRepository, CustomerRepository>();
-            //services.AddSingleton(new LiteDatabase(Configuration.GetConnectionString("db")));
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddDbContext<BDDContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(Configuration.GetConnectionString("db")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
