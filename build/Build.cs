@@ -14,6 +14,7 @@ using static Nuke.Common.IO.PathConstruction;
 
 using static Nuke.Common.ControlFlow;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using MartinCostello.SqlLocalDb;
 
 class Build : NukeBuild
 {
@@ -32,6 +33,11 @@ class Build : NukeBuild
 
     AbsolutePath SourceDirectory => RootDirectory / "src/CustomerApi";
     AbsolutePath TestsDirectory => RootDirectory / "src/CustomerApi.ServiceTests";
+
+    AbsolutePath DbUpDirectory => RootDirectory / "Database/CustomerApi.ServiceTests/bin/debug/net5.0/Database.exe";
+
+    [LocalExecutable(@"C:\My\Programs\AutoBuild_BDD\Database\bin\Debug\net5.0\Database.exe")]
+    readonly Tool dbup;
 
     Target Clean => _ => _
         .Executes(() =>
@@ -60,21 +66,22 @@ class Build : NukeBuild
                 .EnableNoRestore());
         });
 
-    Target Database => _ => _
-        .DependsOn(Compile)
-        .Executes(() =>
-        {
-            
-        });
 
     Target Test => _ => _
        .DependsOn(Compile)
        .Executes(() =>
        {
+           using var localDB = new SqlLocalDbApi();
+           using TemporarySqlLocalDbInstance instance = localDB.CreateTemporaryInstance(deleteFiles: true);
+
+           dbup.Invoke(instance.ConnectionString);
+
            DotNetTest(s => s
             .SetProjectFile(AutoBuild_BDD)
             .SetConfiguration(Configuration)
             .EnableNoRestore()
             .EnableNoBuild());
+
+           
        });
 }

@@ -15,8 +15,10 @@ namespace Database
                    .AddEnvironmentVariables()
                    .Build();
 
-            var connectionString =
-                    configuration.GetConnectionString("Database");
+
+            var connectionString = args.Length > 0?
+                    args[0]
+                    :configuration.GetConnectionString("Database");
 
             var builder = DeployChanges.To
                 .SqlDatabase(connectionString)
