@@ -34,16 +34,14 @@ class Build : NukeBuild
     AbsolutePath SourceDirectory => RootDirectory / "src/CustomerApi";
     AbsolutePath TestsDirectory => RootDirectory / "src/CustomerApi.ServiceTests";
 
-    AbsolutePath DbUpDirectory => RootDirectory / "Database/CustomerApi.ServiceTests/bin/debug/net5.0/Database.exe";
-
-    [LocalExecutable(@"C:\My\Programs\AutoBuild_BDD\Database\bin\Debug\net5.0\Database.exe")]
-    readonly Tool dbup;
+    AbsolutePath DbUpDirectory => RootDirectory / "Database";
 
     Target Clean => _ => _
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
             TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
+            DbUpDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
         });
 
     Target Restore => _ => _
@@ -69,12 +67,29 @@ class Build : NukeBuild
 
     Target Test => _ => _
        .DependsOn(Compile)
-       .Executes(() =>
+       .Executes(async () =>
        {
            using var localDB = new SqlLocalDbApi();
-           using TemporarySqlLocalDbInstance instance = localDB.CreateTemporaryInstance(deleteFiles: true);
+           var dbInstance = localDB.CreateInstance("AutoBuild");
+           ISqlLocalDbInstanceManager manager = dbInstance.Manage();
+           if (!dbInstance.IsRunning)
+           {
+               manager.Start();
+           }
 
-           dbup.Invoke(instance.ConnectionString);
+           using (var connection = dbInstance.CreateConnection())
+           {
+               await connection.OpenAsync();
+               var command = connection.CreateCommand();
+               command.CommandType = System.Data.CommandType.Text;
+               command.CommandText = "CREATE DATABASE BDD;";
+               await command.ExecuteNonQueryAsync();
+           }
+
+           DotNetRun(s => s
+           .SetProjectFile(DbUpDirectory)
+           .EnableNoBuild()
+           .EnableNoRestore());
 
            DotNetTest(s => s
             .SetProjectFile(AutoBuild_BDD)
@@ -82,6 +97,17 @@ class Build : NukeBuild
             .EnableNoRestore()
             .EnableNoBuild());
 
-           
+           using (var connection = dbInstance.CreateConnection())
+           {
+               await connection.OpenAsync();
+               var command = connection.CreateCommand();
+               command.CommandType = System.Data.CommandType.Text;
+               command.CommandText = "DROP DATABASE BDD;";
+               await command.ExecuteNonQueryAsync();
+           }
+
+           manager.Stop();
+           localDB.DeleteInstance("AutoBuild", true);
+
        });
 }
