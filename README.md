@@ -21,3 +21,4 @@ https://github.com/martincostello/sqllocaldb
 
 ## 執行 ##
 先確定系統有裝SqlLocalDb，然後執行_build專案，就可以跑完所有的測試，產生如下的報告。
+![](Screenshot.png)
